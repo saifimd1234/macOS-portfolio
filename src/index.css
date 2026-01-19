@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @import url("https://fonts.googleapis.com/css2?family=Georama:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+
+
 html,
 body {
   width: 100dvw;
@@ -46,3 +48,10 @@ body {
       }
     }
 
+    ul {
+      @apply flex items-center gap-5 max-sm:hidden;
+
+      p {
+        @apply text-sm cursor-pointer hover:underline transition-all;
+      }
+    }
