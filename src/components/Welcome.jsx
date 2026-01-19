@@ -1,5 +1,18 @@
 import React, { useRef } from 'react'
 
+const renderText = (text, className, baseWeight = 400) => {
+    return [...text].map((char, index) => (
+        <span
+            key={index}
+            className={className}
+            style={{
+                fontVariationSettings: `"wght" ${baseWeight}`,
+            }}
+        >
+            {char === " " ? "\u00A0" : char} 
+        </span>
+    ))
+}
 
 const Welcome = () => {
 
@@ -8,8 +21,20 @@ const Welcome = () => {
 
     return (
         <section id="welcome">
-            <p ref={titleRef}>Hey, I'm Saifi! Welcome to my</p>
-            <h1 ref={subtitleRef} className='mt-7'>Portfolio</h1>
+            <p ref={titleRef}>
+                {renderText(
+                    "Hey, I'm Saifi! Welcome to my",
+                    "text-3xl font-georama",
+                    100,
+                )}
+            </p>
+            <h1 ref={subtitleRef} className='mt-7'>
+                {renderText(
+                    "portfolio",
+                    "text-9xl italic font-georama",
+                    400,
+                )}
+            </h1>
 
             <div className='small-screen'>
                 <p>This Portfolio is designed for desktop/tabled screen only.</p>
