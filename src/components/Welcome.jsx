@@ -1,8 +1,10 @@
 import React, { useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 
 const FONT_WEIGHTS = {
-    subtitle: {min: 100, max: 400, default: 100},
-    title: {min: 400, max: 900, default: 400},
+    subtitle: { min: 100, max: 400, default: 100 },
+    title: { min: 400, max: 900, default: 400 },
 }
 
 const renderText = (text, className, baseWeight = 400) => {
@@ -11,7 +13,7 @@ const renderText = (text, className, baseWeight = 400) => {
             key={index}
             className={className}
             style={{
-                fontVariationSettings: `"wght" ${baseWeight}`,
+                fontVariationSettings: `'wght' ${baseWeight}`,
             }}
         >
             {char === " " ? "\u00A0" : char}
@@ -20,38 +22,43 @@ const renderText = (text, className, baseWeight = 400) => {
 }
 
 const setupTextHover = (container, type) => {
-    if(!container) return;
+    if (!container) return;
 
     const letters = container.querySelectorAll("span");
-    const {min, max, default: base} = FONT_WEIGHTS[type];
+    const { min, max, default: base } = FONT_WEIGHTS[type];
 
     const animateLetter = (letter, weight, duration = 0.25) => {
         return gsap.to(letter, {
-            duration,
+            duration: duration,
             ease: "power2.out",
-            fontVariationSettings: `"wght" ${weight}`,
+            fontVariationSettings: `'wght' ${weight}`,
         })
     }
 
     const handleMouseMove = (e) => {
-     const { left } = container.getBoundingClientRect();
-     const mouseX = e.clientX - left;
-     
-     letters.forEach((letter) => {
-        const { left: l, width: w } = letter.getBoundingClientRect();
-        const distance = Math.abs(mouseX - (l - left + w/2));
-        const intensity = Math.exp(-(distance ** 2)/2000);
+        const { left } = container.getBoundingClientRect();
+        const mouseX = e.clientX - left;
 
-        animateLetter(letter, min + (intensity * (max - min)));
-     })
-    
+        letters.forEach((letter) => {
+            const { left: l, width: w } = letter.getBoundingClientRect();
+            const distance = Math.abs(mouseX - (l - left + w / 2));
+            const intensity = Math.exp(-(distance ** 2) / 2000);
+
+            animateLetter(letter, min + (max - min) * intensity);
+        })
     }
+    container.addEventListener("mousemove", handleMouseMove);
 }
 
 const Welcome = () => {
 
     const titleRef = useRef(null);
     const subtitleRef = useRef(null);
+
+    useGSAP(() => {
+        setupTextHover(titleRef.current, "title");
+        setupTextHover(subtitleRef.current, "subtitle");
+    }, []);
 
     return (
         <section id="welcome">
