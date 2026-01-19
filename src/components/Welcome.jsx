@@ -7,13 +7,13 @@ const FONT_WEIGHTS = {
     title: { min: 400, max: 900, default: 400 },
 }
 
-const renderText = (text, className, baseWeight = 400) => {
+const renderText = (text, className, base = 400) => {
     return [...text].map((char, index) => (
         <span
             key={index}
             className={className}
             style={{
-                fontVariationSettings: `'wght' ${baseWeight}`,
+                fontVariationSettings: `'wght' ${base}`,
             }}
         >
             {char === " " ? "\u00A0" : char}
@@ -68,8 +68,13 @@ const Welcome = () => {
     const subtitleRef = useRef(null);
 
     useGSAP(() => {
-        setupTextHover(titleRef.current, "title");
-        setupTextHover(subtitleRef.current, "subtitle");
+        const titleCleanup = setupTextHover(titleRef.current, "title");
+        const subtitleCleanup = setupTextHover(subtitleRef.current, "subtitle");
+
+        return () => {
+            titleCleanup();
+            subtitleCleanup();
+        }
     }, []);
 
     return (
