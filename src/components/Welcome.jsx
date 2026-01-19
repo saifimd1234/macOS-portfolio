@@ -1,5 +1,10 @@
 import React, { useRef } from 'react'
 
+const FONT_WEIGHTS = {
+    subtitle: {min: 100, max: 400, default: 100},
+    title: {min: 400, max: 900, default: 400},
+}
+
 const renderText = (text, className, baseWeight = 400) => {
     return [...text].map((char, index) => (
         <span
@@ -9,9 +14,17 @@ const renderText = (text, className, baseWeight = 400) => {
                 fontVariationSettings: `"wght" ${baseWeight}`,
             }}
         >
-            {char === " " ? "\u00A0" : char} 
+            {char === " " ? "\u00A0" : char}
         </span>
     ))
+}
+
+const setupTextHover = (container, type) => {
+    if(!container) return;
+
+    const letters = container.querySelectorAll("span");
+    const {min, max, default: base} = FONT_WEIGHTS[type];
+
 }
 
 const Welcome = () => {
