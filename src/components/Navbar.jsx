@@ -1,5 +1,11 @@
 import React from 'react'
 
+const data = [
+    {id: 1, name:"Portfolio"},
+    {id: 2, name:"About"},
+    {id: 3, name:"Contact"},
+]
+
 const Navbar = () => {
   return (
     <nav>
@@ -7,11 +13,7 @@ const Navbar = () => {
             <img src="/images/logo.svg" alt="Logo" />
             <p className='font-bold text-xl'>Saifi's Portfolio</p>
              <ul>
-            {[
-                {id: 1, name:"Portfolio"},
-                {id: 2, name:"About"},
-                {id: 3, name:"Contact"},
-            ].map((item) => (
+            {data.map((item) => (
                 <li key={item.id}>
                     <p>{item.name}</p>
                 </li>
