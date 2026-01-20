@@ -1,6 +1,7 @@
 import { dockApps } from '#constants';
 import { Tooltip } from 'react-tooltip'
 import React, { useRef } from 'react'
+import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
 const Dock = () => {
@@ -46,6 +47,13 @@ const Dock = () => {
                     ease: "power1.out"
                 })
             })
+        }
+        dock.addEventListener("mousemove", handleMouseMove);
+        dock.addEventListener("mouseleave", resetIcons);
+
+        return () => {
+            dock.removeEventListener("mousemove", handleMouseMove);
+            dock.removeEventListener("mouseleave", resetIcons);
         }
     }, []);
 
