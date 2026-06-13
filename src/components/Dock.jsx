@@ -1,4 +1,5 @@
-import { dockApps } from '#constants';
+import { dockApps, locations } from '#constants';
+import { useWindows } from '#store';
 import { Tooltip } from 'react-tooltip'
 import React, { useRef } from 'react'
 import { useGSAP } from '@gsap/react';
@@ -7,6 +8,7 @@ import gsap from 'gsap';
 const Dock = () => {
 
     const dockRef = useRef(null);
+    const { open, isOpen } = useWindows();
 
     useGSAP(() => {
         const dock = dockRef.current;
@@ -57,32 +59,50 @@ const Dock = () => {
         }
     }, []);
 
-const toogleApp = (app) => {
+const toggleApp = (app, e) => {
+    if (!app.canOpen) return;
 
+    const rect = e.currentTarget.getBoundingClientRect();
+    const origin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+
+    if (app.id === "finder") {
+        open("finder", {
+            singleton: true,
+            data: locations.work,
+            title: "Portfolio",
+            origin,
+        });
+        return;
+    }
+
+    open(app.id, { singleton: true, title: app.name, origin });
 }
 
 return (
     <section id="dock">
         <div ref={dockRef} className='dock-container'>
-            {dockApps.map(({ id, name, icon, canOpen }) => (
-                <div key={id} className="relative flex justify-center">
+            {dockApps.map((app) => (
+                <div key={app.id} className="relative flex flex-col items-center">
                     <button
                         type="button"
                         className="dock-icon"
-                        aria-label={name}
+                        aria-label={app.name}
                         data-tooltip-id="dock-tooltip"
-                        data-tooltip-content={name}
+                        data-tooltip-content={app.name}
                         data-tooltip-delay-show={150}
-                        disabled={!canOpen}
-                        onClick={() => toogleApp(app)}
+                        disabled={!app.canOpen}
+                        onClick={(e) => toggleApp(app, e)}
                     >
                         <img
-                            src={`/images/${icon}`}
-                            alt={name}
+                            src={`/images/${app.icon}`}
+                            alt={app.name}
                             loading="lazy"
-                            className={canOpen ? "" : "opacity-60"}
+                            className={app.canOpen ? "" : "opacity-60"}
                         />
                     </button>
+                    <span
+                        className={`dock-dot ${isOpen(app.id) ? "is-open" : ""}`}
+                    />
                 </div>
             ))}
             <Tooltip id="dock-tooltip" place="top" className="tooltip" />

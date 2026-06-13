@@ -2,6 +2,8 @@
 
 @import "tailwindcss";
 
+/* Class-based dark mode (toggled by adding `.dark` to <html>). */
+@custom-variant dark (&:where(.dark, .dark *));
 
 html,
 body {
@@ -12,6 +14,12 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+/* Dark desktop: darken the wallpaper with an overlay. */
+html.dark body {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+    url("/images/wallpaper.png");
 }
 
 @theme {
@@ -38,7 +46,7 @@ body {
   }
 
   nav {
-    @apply flex justify-between items-center bg-white/50 backdrop-blur-3xl p-2 px-5 select-none;
+    @apply flex justify-between items-center bg-white/50 dark:bg-black/40 dark:text-gray-100 backdrop-blur-3xl p-2 px-5 select-none;
 
     div {
       @apply flex items-center max-sm:w-full max-sm:justify-center gap-5;
@@ -57,25 +65,21 @@ body {
     }
 
     time {
-      @apply text-sm font-medium text-black;
+      @apply text-sm font-medium text-black dark:text-gray-100;
     }
   }
 }
 
 @layer components {
-  .icon {
-    @apply p-1 hover:bg-gray-200 rounded hover:cursor-default;
+  .icon-hover {
+    @apply size-5 p-0.5 rounded hover:bg-black/10 dark:hover:bg-white/10 transition-colors;
   }
 
   #welcome {
-    @apply text-gray-200 flex flex-col justify-center items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none max-sm:h-screen max-sm:w-full max-sm:px-10;
+    @apply text-gray-200 flex flex-col justify-center items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none max-sm:hidden;
 
-    .small-screen {
-      @apply sm:hidden m-7 bg-red-300/20 backdrop-blur-lg p-3 rounded-md absolute top-10;
-
-      p {
-        @apply flex-1 text-[16px] text-center font-roboto text-gray-400;
-      }
+    .hint {
+      @apply mt-10 text-sm text-gray-300/80 font-roboto;
     }
   }
 
@@ -83,7 +87,7 @@ body {
     @apply absolute bottom-5 left-1/2 -translate-x-1/2 z-50 select-none max-sm:hidden;
 
     .dock-container {
-      @apply bg-white/20 backdrop-blur-md justify-between rounded-2xl p-1.5 flex items-end gap-1.5;
+      @apply bg-white/20 dark:bg-white/10 backdrop-blur-md justify-between rounded-2xl p-1.5 flex items-end gap-1.5;
     }
 
     .tooltip {
@@ -91,16 +95,36 @@ body {
     }
 
     .dock-icon {
-      @apply size-14 3xl:size-20 cursor-pointer;
+      @apply size-14 3xl:size-20 cursor-pointer disabled:cursor-default;
 
       img {
         @apply object-cover object-center;
       }
     }
+
+    .dock-dot {
+      @apply mt-0.5 size-1 rounded-full bg-transparent transition-colors;
+
+      &.is-open {
+        @apply bg-white/80;
+      }
+    }
   }
 
-  #window-controls {
-    @apply flex gap-2;
+  /* ---------------------------------------------------------------- *
+   *  Shared window chrome
+   * ---------------------------------------------------------------- */
+  .window {
+    @apply flex flex-col max-h-[88vh] text-gray-800 dark:text-gray-100;
+  }
+
+  /* Scrollable body shared by every window; fills the space below the header. */
+  .window-body {
+    @apply flex flex-col flex-1 min-h-0 overflow-auto;
+  }
+
+  .window-controls {
+    @apply flex gap-2 items-center;
 
     .close {
       @apply size-3.5 rounded-full bg-[#ff6157] cursor-pointer;
@@ -115,82 +139,94 @@ body {
     }
   }
 
-  #window-header {
-    @apply flex items-center justify-between px-4 py-3 rounded-t-lg bg-gray-50 border-b border-gray-200 select-none text-sm text-gray-400;
+  .window-header {
+    @apply flex items-center justify-between gap-3 px-4 py-3 rounded-t-lg bg-gray-50 dark:bg-neutral-800 border-b border-gray-200 dark:border-neutral-700 select-none cursor-grab active:cursor-grabbing text-sm text-gray-400;
+
+    h2 {
+      @apply flex-1 text-center font-semibold text-sm text-gray-700 dark:text-gray-100 truncate;
+    }
   }
 
-  #safari {
-    @apply w-4xl absolute top-40 left-2/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+  /* ---------------------------------------------------------------- *
+   *  Safari / Articles
+   * ---------------------------------------------------------------- */
+  .safari {
+    @apply w-4xl max-w-[92vw] absolute top-40 left-2/12 bg-white dark:bg-neutral-900 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+
+    .safari-bar {
+      @apply flex items-center gap-3 px-5 py-3 bg-gray-50 dark:bg-neutral-800 border-b border-gray-200 dark:border-neutral-700;
+    }
 
     .search {
-      @apply flex items-center gap-3 w-2/3 bg-white border border-gray-300 rounded-lg px-3 py-2;
+      @apply flex items-center gap-3 w-2/3 bg-white dark:bg-neutral-700 border border-gray-300 dark:border-neutral-600 rounded-lg px-3 py-2;
 
       input {
-        @apply placeholder:text-gray-400;
+        @apply bg-transparent outline-none flex-1 placeholder:text-gray-400;
       }
     }
 
     .blog {
-      @apply bg-white p-10 max-w-3xl mx-auto;
+      @apply bg-white dark:bg-neutral-900 p-10 max-w-3xl mx-auto w-full;
 
       h2 {
-        @apply text-xl font-bold text-pink-600 mb-10;
+        @apply text-xl font-bold text-pink-600 mb-8;
       }
 
       .blog-post {
-        @apply grid grid-cols-12 space-x-5;
+        @apply grid grid-cols-12 gap-5;
 
         img {
           @apply size-full rounded-md object-cover;
         }
 
         .content {
-          @apply col-span-10 space-y-3;
+          @apply col-span-10 space-y-2;
 
           p {
-            @apply text-xs text-gray-500;
+            @apply text-xs text-gray-500 dark:text-gray-400;
           }
 
           h3 {
-            @apply font-semibold text-base text-gray-800;
+            @apply font-semibold text-base text-gray-800 dark:text-gray-100;
           }
 
           a {
-            @apply text-blue-600 text-xs hover:underline flex items-center gap-3;
+            @apply text-blue-600 text-xs hover:underline flex items-center gap-1;
           }
         }
       }
     }
   }
 
-  #terminal {
-    @apply w-xl absolute top-32 left-1/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
-
-    h2 {
-      @apply font-bold text-sm text-center w-full;
-    }
+  /* ---------------------------------------------------------------- *
+   *  Terminal / Skills
+   * ---------------------------------------------------------------- */
+  .terminal {
+    @apply w-xl max-w-[92vw] absolute top-32 left-1/12 bg-white dark:bg-neutral-900 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
     .techstack {
       @apply text-sm font-roboto p-5;
 
       .label {
-        @apply flex items-center ms-10 mt-7;
+        @apply flex items-center ms-2 mt-2 text-gray-700 dark:text-gray-200;
       }
 
       .content {
-        @apply py-5 my-5 border-y border-dashed space-y-1;
+        @apply py-5 my-5 border-y border-dashed border-gray-300 dark:border-neutral-700 space-y-2;
 
-        li {
+        > li {
+          @apply flex items-center;
+
           .check {
             @apply text-[#00A154] w-5;
           }
 
           h3 {
-            @apply font-semibold text-[#00A154] w-32 ms-5;
+            @apply font-semibold text-[#00A154] w-32 ms-3;
           }
 
           ul {
-            @apply flex items-center gap-3;
+            @apply flex items-center flex-wrap gap-3 text-gray-700 dark:text-gray-200;
           }
         }
       }
@@ -199,35 +235,38 @@ body {
         @apply text-[#00A154] space-y-1;
 
         p {
-          @apply flex items-center;
-
-          svg {
-            @apply w-5 me-5;
-          }
+          @apply flex items-center gap-2;
         }
       }
     }
   }
 
-  #contact {
-    @apply max-w-2xl absolute top-60 left-5/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+  /* ---------------------------------------------------------------- *
+   *  Contact
+   * ---------------------------------------------------------------- */
+  .contact {
+    @apply max-w-2xl absolute top-60 left-5/12 bg-white dark:bg-neutral-900 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
-    h2 {
-      @apply font-bold text-sm text-center w-full;
+    .contact-body {
+      @apply p-8 space-y-5;
     }
 
     h3 {
-      @apply text-xl font-semibold;
+      @apply text-xl font-semibold text-gray-800 dark:text-gray-100;
+    }
+
+    .subtitle {
+      @apply text-sm text-gray-500 dark:text-gray-400;
     }
 
     ul {
-      @apply flex items-center gap-3;
+      @apply grid grid-cols-2 gap-3;
 
       li {
-        @apply rounded-lg p-3 w-60 hover:-translate-y-0.5 hover:scale-105 origin-center transition-all duration-300;
+        @apply rounded-lg p-3 w-full hover:-translate-y-0.5 hover:scale-105 origin-center transition-all duration-300;
 
         a {
-          @apply space-y-5;
+          @apply flex flex-col gap-4;
         }
 
         p {
@@ -237,19 +276,26 @@ body {
     }
   }
 
-  #photos {
-    @apply max-w-3xl absolute top-96 left-1/2 -translate-y-1/2 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+  /* ---------------------------------------------------------------- *
+   *  Photos / Gallery
+   * ---------------------------------------------------------------- */
+  .photos {
+    @apply max-w-3xl absolute top-40 left-1/2 -translate-x-1/2 bg-white dark:bg-neutral-900 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+
+    .photos-body {
+      @apply flex;
+    }
 
     .sidebar {
-      @apply w-3/12 flex-none bg-gray-50 border-r border-gray-200 flex flex-col p-5;
+      @apply w-3/12 flex-none bg-gray-50 dark:bg-neutral-800 border-r border-gray-200 dark:border-neutral-700 flex flex-col p-5;
 
       h2 {
-        @apply text-xs font-medium text-gray-400 mb-1;
+        @apply text-xs font-medium text-gray-400 mb-2;
       }
 
       ul {
         li {
-          @apply flex space-y-1 items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors;
+          @apply flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors text-gray-700 dark:text-gray-200;
 
           &:first-child {
             @apply bg-blue-100 text-blue-700;
@@ -270,7 +316,7 @@ body {
       @apply p-5;
 
       ul {
-        @apply grid grid-cols-5 grid-rows-5 gap-2.5;
+        @apply grid grid-cols-5 grid-rows-5 gap-2.5 h-[26rem] w-[26rem] max-w-full;
 
         li {
           img {
@@ -297,21 +343,49 @@ body {
     }
   }
 
-  #resume {
-    @apply w-fit h-fit absolute top-16 left-7/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+  /* ---------------------------------------------------------------- *
+   *  Resume
+   * ---------------------------------------------------------------- */
+  .resume {
+    @apply absolute top-14 left-[14vw] w-[58vw] max-w-3xl h-[82vh] bg-white dark:bg-neutral-900 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
-    #window-header {
-      h2 {
-        @apply font-bold text-sm text-center flex-1;
+    .resume-download {
+      @apply text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white cursor-pointer;
+    }
+  }
+
+  .pdf-viewer {
+    @apply h-full overflow-auto bg-gray-300 dark:bg-neutral-800;
+
+    .pdf-pages {
+      @apply flex flex-col items-center gap-3 p-3;
+    }
+
+    .pdf-page {
+      @apply max-w-full h-auto shadow-md bg-white;
+    }
+
+    .pdf-state {
+      @apply text-center text-sm text-gray-600 dark:text-gray-300 p-6;
+
+      a {
+        @apply text-blue-600 underline;
       }
     }
   }
 
-  #finder {
-    @apply absolute w-3xl left-40 top-20 shadow-2xl drop-shadow-2xl overflow-hidden rounded-xl;
+  /* ---------------------------------------------------------------- *
+   *  Finder
+   * ---------------------------------------------------------------- */
+  .finder {
+    @apply absolute w-3xl max-w-[92vw] h-[70vh] left-40 top-20 shadow-2xl drop-shadow-2xl overflow-hidden rounded-xl bg-white dark:bg-neutral-900 flex flex-col;
+
+    .finder-body {
+      @apply flex flex-1 min-h-0;
+    }
 
     .sidebar {
-      @apply w-48 bg-gray-50 border-r border-gray-200 flex flex-col p-5 space-y-3;
+      @apply w-48 flex-none bg-gray-50 dark:bg-neutral-800 border-r border-gray-200 dark:border-neutral-700 flex flex-col p-5 space-y-3 overflow-y-auto;
 
       h3 {
         @apply text-xs font-medium text-gray-400 mb-1;
@@ -325,7 +399,7 @@ body {
         }
 
         .not-active {
-          @apply text-gray-700 hover:bg-gray-200;
+          @apply text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-neutral-700;
         }
 
         li {
@@ -335,41 +409,57 @@ body {
     }
 
     .content {
-      @apply flex-1 p-8 bg-white max-w-2xl relative;
+      @apply flex-1 p-8 bg-white dark:bg-neutral-900 relative overflow-auto;
 
-      li {
+      > ul > li {
         @apply absolute flex items-center flex-col gap-3;
 
         img {
-          @apply object-contain object-center size-16 relative group-hover:scale-105;
+          @apply object-contain object-center size-16 relative transition-transform group-hover:scale-105;
         }
 
         p {
-          @apply text-sm text-center font-medium w-40;
+          @apply text-sm text-center font-medium w-40 text-gray-700 dark:text-gray-200 px-1 rounded group-hover:bg-blue-500 group-hover:text-white transition-colors;
+        }
+
+        .link-hint {
+          @apply text-[10px] text-gray-400 hidden group-hover:flex items-center gap-0.5;
         }
       }
     }
   }
 
-  #txtfile {
-    @apply w-md absolute top-36 right-32 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
+  /* ---------------------------------------------------------------- *
+   *  Text-file window
+   * ---------------------------------------------------------------- */
+  .txtfile {
+    @apply w-md max-w-[92vw] absolute top-36 right-32 bg-white dark:bg-neutral-900 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
-    h2 {
-      @apply font-bold text-sm text-center w-full;
+    .txt-body {
+      @apply p-6 space-y-3;
+
+      h3 {
+        @apply text-lg font-semibold text-gray-800 dark:text-gray-100;
+      }
+
+      p {
+        @apply text-sm text-gray-600 dark:text-gray-300 leading-relaxed;
+      }
+
+      .txt-image {
+        @apply w-full rounded-md my-2 object-cover;
+      }
     }
   }
 
-  #imgfile {
-    @apply w-xl absolute top-40 left-2/12 bg-white shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
-
-    #window-header {
-      p {
-        @apply font-bold text-[#5f6266];
-      }
-    }
+  /* ---------------------------------------------------------------- *
+   *  Image-file window
+   * ---------------------------------------------------------------- */
+  .imgfile {
+    @apply w-xl max-w-[92vw] absolute top-40 left-2/12 bg-white dark:bg-neutral-900 shadow-2xl drop-shadow-2xl rounded-xl overflow-hidden;
 
     .preview {
-      @apply p-2 bg-gray-200 max-h-[70vh];
+      @apply p-2 bg-gray-200 dark:bg-neutral-800;
 
       img {
         @apply w-full h-fit object-contain object-center;
@@ -377,15 +467,18 @@ body {
     }
   }
 
+  /* ---------------------------------------------------------------- *
+   *  Desktop folder icons
+   * ---------------------------------------------------------------- */
   #home {
-    @apply relative z-0 max-sm:hidden;
+    @apply absolute inset-x-0 bottom-0 z-0 max-sm:hidden pointer-events-none;
 
     ul {
       li {
-        @apply absolute z-0 select-none flex items-center flex-col;
+        @apply absolute z-0 select-none flex items-center flex-col gap-1 pointer-events-auto;
 
         img {
-          @apply group-hover:bg-gray-950/10 p-1 rounded-md;
+          @apply group-hover:bg-gray-950/10 p-1 rounded-md transition-colors;
         }
 
         p {
@@ -393,5 +486,182 @@ body {
         }
       }
     }
+  }
+
+  /* Resize handles — every edge and corner, like a real window. */
+  .resize-handle {
+    @apply absolute z-20;
+  }
+  .resize-n {
+    @apply top-0 inset-x-0 h-1.5 cursor-ns-resize;
+  }
+  .resize-s {
+    @apply bottom-0 inset-x-0 h-1.5 cursor-ns-resize;
+  }
+  .resize-e {
+    @apply right-0 inset-y-0 w-1.5 cursor-ew-resize;
+  }
+  .resize-w {
+    @apply left-0 inset-y-0 w-1.5 cursor-ew-resize;
+  }
+  .resize-ne {
+    @apply top-0 right-0 size-3 z-30 cursor-nesw-resize;
+  }
+  .resize-nw {
+    @apply top-0 left-0 size-3 z-30 cursor-nwse-resize;
+  }
+  .resize-se {
+    @apply bottom-0 right-0 size-3 z-30 cursor-nwse-resize;
+  }
+  .resize-sw {
+    @apply bottom-0 left-0 size-3 z-30 cursor-nesw-resize;
+  }
+
+  /* ================================================================ *
+   *  iPhone (mobile) experience
+   * ================================================================ */
+  .iphone-stage {
+    @apply w-dvw h-dvh flex-center p-4;
+  }
+
+  .iphone {
+    @apply relative w-full max-w-[390px] h-[88dvh] max-h-[844px] bg-gray-100 dark:bg-neutral-950 rounded-[3rem] border-[10px] border-black shadow-2xl overflow-hidden flex flex-col;
+  }
+
+  .notch {
+    @apply absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-full z-30;
+  }
+
+  .status-bar {
+    @apply flex items-center justify-between px-7 pt-3 pb-1 text-xs font-semibold text-black dark:text-white z-20;
+
+    .status-icons {
+      @apply flex items-center gap-1.5;
+    }
+  }
+
+  .home-screen {
+    @apply flex-1 p-6 pt-6 overflow-y-auto;
+
+    .home-top {
+      @apply flex items-center justify-between mb-8;
+
+      .hello {
+        @apply text-base font-semibold text-gray-800 dark:text-gray-100;
+      }
+
+      .theme-btn {
+        @apply p-2 rounded-full bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-100;
+      }
+    }
+
+    .app-grid {
+      @apply grid grid-cols-4 gap-x-4 gap-y-6;
+
+      .app-icon {
+        @apply flex flex-col items-center gap-1.5;
+
+        img {
+          @apply size-14 rounded-2xl object-cover shadow-md;
+        }
+
+        span {
+          @apply text-[11px] text-gray-700 dark:text-gray-200;
+        }
+      }
+    }
+  }
+
+  .app-view {
+    @apply flex-1 flex flex-col overflow-hidden;
+
+    .app-bar {
+      @apply flex items-center justify-between px-4 py-3 border-b bg-gray-50 dark:bg-neutral-900 dark:border-neutral-800 text-gray-800 dark:text-gray-100 font-semibold;
+    }
+
+    .app-content {
+      @apply flex-1 overflow-y-auto bg-gray-100 dark:bg-neutral-950;
+    }
+  }
+
+  .home-indicator {
+    @apply absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 rounded-full bg-black/50 dark:bg-white/60 z-30;
+  }
+
+  /* Mobile app screens */
+  .m-screen {
+    @apply p-5 space-y-4;
+
+    h1 {
+      @apply text-2xl font-bold text-gray-900 dark:text-white;
+    }
+  }
+
+  .m-card {
+    @apply block bg-white dark:bg-neutral-900 rounded-xl shadow-sm p-3 space-y-2 border border-gray-100 dark:border-neutral-800;
+
+    img {
+      @apply w-full h-40 object-cover rounded-lg;
+    }
+
+    h2 {
+      @apply text-base font-semibold text-gray-900 dark:text-white;
+    }
+
+    p {
+      @apply text-sm text-gray-500 dark:text-gray-400;
+    }
+  }
+
+  .m-date {
+    @apply !text-xs;
+  }
+
+  .m-actions {
+    @apply flex gap-4;
+
+    a {
+      @apply inline-flex items-center gap-1 text-sm text-blue-600 font-medium;
+    }
+  }
+
+  .m-gallery {
+    @apply grid grid-cols-2 gap-2;
+
+    img {
+      @apply w-full h-32 object-cover rounded-lg;
+    }
+  }
+
+  .m-paragraph {
+    @apply text-sm text-gray-600 dark:text-gray-300 leading-relaxed;
+  }
+
+  .m-skill {
+    @apply bg-white dark:bg-neutral-900 rounded-xl p-3 border border-gray-100 dark:border-neutral-800;
+
+    h2 {
+      @apply font-semibold text-gray-900 dark:text-white mb-1;
+    }
+
+    ul li {
+      @apply flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 py-0.5;
+    }
+  }
+
+  .m-socials {
+    @apply grid grid-cols-2 gap-3;
+
+    a {
+      @apply flex items-center gap-2 p-3 rounded-xl text-white font-medium text-sm;
+    }
+  }
+
+  .m-resume {
+    @apply w-full h-[55vh] rounded-lg border border-gray-200 dark:border-neutral-800 bg-white;
+  }
+
+  .m-resume-link {
+    @apply inline-block mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium;
   }
 }

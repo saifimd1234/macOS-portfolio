@@ -490,6 +490,16 @@ export const locations = {
   trash: TRASH_LOCATION,
 };
 
+// Folder icons shown on the desktop (top-right), macOS style.
+// Each entry maps to a key in `locations`. `desktopPosition` is a Tailwind
+// utility string used to place the icon on the desktop.
+export const desktopItems = [
+  { key: "work", desktopPosition: "top-16 right-8" },
+  { key: "about", desktopPosition: "top-40 right-8" },
+  { key: "resume", desktopPosition: "top-64 right-8" },
+  { key: "trash", desktopPosition: "bottom-28 right-8" },
+];
+
 const INITIAL_Z_INDEX = 1000;
 
 const WINDOW_CONFIG = {
