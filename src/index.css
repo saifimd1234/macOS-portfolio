@@ -260,17 +260,17 @@ html.dark body {
     }
 
     ul {
-      @apply grid grid-cols-2 gap-3;
+      @apply grid grid-cols-2 gap-4;
 
       li {
-        @apply rounded-lg p-3 w-full hover:-translate-y-0.5 hover:scale-105 origin-center transition-all duration-300;
+        @apply rounded-xl p-6 w-full min-h-[130px] flex hover:-translate-y-0.5 hover:scale-105 origin-center transition-all duration-300;
 
         a {
-          @apply flex flex-col gap-4;
+          @apply flex flex-col justify-between gap-6 w-full;
         }
 
         p {
-          @apply font-semibold text-sm text-white;
+          @apply font-semibold text-base text-white;
         }
       }
     }
@@ -768,6 +768,30 @@ html.dark body {
 
   .siri-messages {
     @apply flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2;
+
+    /* Theme-aware scrollbar (Firefox) */
+    scrollbar-width: thin;
+    scrollbar-color: rgb(0 0 0 / 0.25) transparent;
+
+    /* Theme-aware scrollbar (WebKit/Chromium) */
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgb(0 0 0 / 0.25);
+      border-radius: 9999px;
+    }
+
+    :where(.dark) & {
+      scrollbar-color: rgb(255 255 255 / 0.3) transparent;
+
+      &::-webkit-scrollbar-thumb {
+        background-color: rgb(255 255 255 / 0.3);
+      }
+    }
   }
 
   .siri-msg {
@@ -779,7 +803,7 @@ html.dark body {
   }
 
   .siri-msg-assistant {
-    @apply self-start bg-gray-100 dark:bg-neutral-800 text-gray-800 dark:text-gray-100 rounded-bl-sm;
+    @apply self-start bg-gray-100 dark:bg-neutral-800 text-gray-900 dark:text-gray-100 rounded-bl-sm;
   }
 
   .siri-typing {
@@ -808,7 +832,7 @@ html.dark body {
   }
 
   .siri-suggestions button {
-    @apply text-left text-sm px-3 py-2 rounded-xl border border-black/10 dark:border-white/10 text-gray-700 dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors;
+    @apply text-left text-sm px-3 py-2 rounded-xl border border-black/10 dark:border-white/10 text-gray-900 dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors;
   }
 
   .siri-input {

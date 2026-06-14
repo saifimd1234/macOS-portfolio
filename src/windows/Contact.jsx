@@ -13,7 +13,7 @@ const Contact = (props) => (
         {socials.map(({ id, text, icon, bg, link }) => (
           <li key={id} style={{ backgroundColor: bg }}>
             <a href={link} target="_blank" rel="noopener noreferrer">
-              <img src={icon} alt={text} className="size-8" />
+              <img src={icon} alt={text} className="size-10" />
               <p>{text}</p>
             </a>
           </li>
