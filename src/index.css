@@ -520,20 +520,26 @@ html.dark body {
   /* ================================================================ *
    *  iPhone (mobile) experience
    * ================================================================ */
+  /* The real phone IS the device frame, so the mobile view fills the whole
+     viewport edge-to-edge — no fake bezel, no surrounding margins. The page
+     wallpaper (set on <body>) shows through the transparent home screen. */
   .iphone-stage {
-    @apply w-dvw h-dvh flex-center p-4;
+    @apply w-dvw h-dvh overflow-hidden;
   }
 
   .iphone {
-    @apply relative w-full max-w-[390px] h-[88dvh] max-h-[844px] bg-gray-100 dark:bg-neutral-950 rounded-[3rem] border-[10px] border-black shadow-2xl overflow-hidden flex flex-col;
+    @apply relative w-full h-full bg-transparent overflow-hidden flex flex-col;
   }
 
+  /* No fake notch on a real device. */
   .notch {
-    @apply absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-full z-30;
+    @apply hidden;
   }
 
   .status-bar {
-    @apply flex items-center justify-between px-7 pt-3 pb-1 text-xs font-semibold text-black dark:text-white z-20;
+    @apply flex items-center justify-between px-7 pb-1 text-xs font-semibold text-black dark:text-white z-20;
+    /* Respect the real device's status-bar / cutout area. */
+    padding-top: max(0.75rem, env(safe-area-inset-top));
 
     .status-icons {
       @apply flex items-center gap-1.5;
@@ -585,7 +591,8 @@ html.dark body {
   }
 
   .home-indicator {
-    @apply absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 rounded-full bg-black/50 dark:bg-white/60 z-30;
+    @apply absolute left-1/2 -translate-x-1/2 w-32 h-1.5 rounded-full bg-black/50 dark:bg-white/60 z-30;
+    bottom: max(0.5rem, env(safe-area-inset-bottom));
   }
 
   /* Mobile app screens */
@@ -663,5 +670,184 @@ html.dark body {
 
   .m-resume-link {
     @apply inline-block mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium;
+  }
+
+  /* ----------------------------------------------------------------- *
+   *  Siri assistant (floating orb + chat panel + load pop-up)
+   * ----------------------------------------------------------------- */
+  .siri {
+    @apply fixed bottom-6 right-6 flex flex-col items-end gap-3;
+    z-index: 99999;
+  }
+
+  .siri-orb {
+    background: conic-gradient(
+      from 0deg,
+      #5b8cff,
+      #a45bff,
+      #ff5b9e,
+      #ff8a5b,
+      #5bd0ff,
+      #5b8cff
+    );
+    border-radius: 9999px;
+    box-shadow: 0 8px 24px rgba(91, 92, 255, 0.45);
+    animation: siri-spin 6s linear infinite;
+    position: relative;
+  }
+
+  .siri-orb::after {
+    content: "";
+    position: absolute;
+    inset: 18%;
+    border-radius: 9999px;
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(255, 255, 255, 0.85),
+      rgba(255, 255, 255, 0.15) 45%,
+      transparent 70%
+    );
+  }
+
+  .siri-launcher {
+    @apply size-14 flex-center cursor-pointer border-0 transition-transform;
+  }
+
+  .siri-launcher:hover {
+    transform: scale(1.08);
+  }
+
+  .siri-launcher-x {
+    @apply relative z-10 text-white;
+  }
+
+  .siri-orb-sm {
+    @apply size-8 shrink-0;
+    animation-duration: 8s;
+  }
+
+  /* Load pop-up bubble */
+  .siri-popup {
+    @apply relative max-w-[15rem] rounded-2xl bg-white/95 dark:bg-neutral-800/95 backdrop-blur px-4 py-3 shadow-xl border border-black/5 dark:border-white/10;
+    animation: siri-pop 0.3s ease-out;
+  }
+
+  .siri-popup p {
+    @apply text-sm text-gray-800 dark:text-gray-100;
+  }
+
+  .siri-popup-cta {
+    @apply mt-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline;
+  }
+
+  .siri-popup-close {
+    @apply absolute -top-2 -right-2 size-5 flex-center rounded-full bg-gray-200 dark:bg-neutral-700 text-gray-600 dark:text-gray-200;
+  }
+
+  /* Chat panel */
+  .siri-panel {
+    @apply flex flex-col w-[22rem] max-w-[calc(100vw-3rem)] h-[28rem] max-h-[70vh] rounded-2xl overflow-hidden bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl shadow-2xl border border-black/10 dark:border-white/10;
+    animation: siri-pop 0.25s ease-out;
+  }
+
+  .siri-panel-head {
+    @apply flex items-center gap-3 px-4 py-3 border-b border-black/5 dark:border-white/10;
+  }
+
+  .siri-title {
+    @apply text-sm font-semibold text-gray-900 dark:text-white leading-tight;
+  }
+
+  .siri-subtitle {
+    @apply text-xs text-gray-500 dark:text-gray-400 leading-tight;
+  }
+
+  .siri-close {
+    @apply ml-auto size-7 flex-center rounded-full text-gray-500 hover:bg-black/5 dark:hover:bg-white/10;
+  }
+
+  .siri-messages {
+    @apply flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2;
+  }
+
+  .siri-msg {
+    @apply max-w-[85%] px-3 py-2 rounded-2xl text-sm leading-snug whitespace-pre-wrap break-words;
+  }
+
+  .siri-msg-user {
+    @apply self-end bg-blue-600 text-white rounded-br-sm;
+  }
+
+  .siri-msg-assistant {
+    @apply self-start bg-gray-100 dark:bg-neutral-800 text-gray-800 dark:text-gray-100 rounded-bl-sm;
+  }
+
+  .siri-typing {
+    @apply flex items-center gap-1 w-fit;
+  }
+
+  .siri-typing span {
+    @apply size-1.5 rounded-full bg-gray-400 dark:bg-gray-500;
+    animation: siri-blink 1.2s infinite ease-in-out;
+  }
+
+  .siri-typing span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .siri-typing span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  .siri-error {
+    @apply self-start text-xs text-red-500 px-1;
+  }
+
+  .siri-suggestions {
+    @apply flex flex-col gap-2 mt-1;
+  }
+
+  .siri-suggestions button {
+    @apply text-left text-sm px-3 py-2 rounded-xl border border-black/10 dark:border-white/10 text-gray-700 dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors;
+  }
+
+  .siri-input {
+    @apply flex items-center gap-2 p-3 border-t border-black/5 dark:border-white/10;
+  }
+
+  .siri-input input {
+    @apply flex-1 bg-gray-100 dark:bg-neutral-800 rounded-full px-4 py-2 text-sm text-gray-900 dark:text-white outline-none placeholder:text-gray-400;
+  }
+
+  .siri-input button {
+    @apply size-9 shrink-0 flex-center rounded-full bg-blue-600 text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors;
+  }
+}
+
+@keyframes siri-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes siri-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes siri-blink {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+  }
+  30% {
+    opacity: 1;
   }
 }

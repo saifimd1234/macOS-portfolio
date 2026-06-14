@@ -44,7 +44,7 @@ const dockApps = [
   },
   {
     id: "safari",
-    name: "Articles", // was "Safari"
+    name: "Certifications", // was "Safari"
     icon: "safari.png",
     canOpen: true,
   },
@@ -74,55 +74,69 @@ const dockApps = [
   },
 ];
 
+// Certifications (rendered in the "Certifications" window, formerly Articles).
 const blogPosts = [
   {
     id: 1,
-    date: "Sep 2, 2025",
+    date: "Mar 2025",
     title:
-      "TypeScript Explained: What It Is, Why It Matters, and How to Master It",
+      "Data Visualisation: Empowering Business with Effective Insights — Tata Group (Forage)",
     image: "/images/blog1.png",
-    link: "https://jsmastery.com/blog/typescript-explained-what-it-is-why-it-matters-and-how-to-master-it",
+    link: "https://www.theforage.com/",
   },
   {
     id: 2,
-    date: "Aug 28, 2025",
-    title: "The Ultimate Guide to Mastering Three.js for 3D Development",
+    date: "2024",
+    title: "SQL (Basic & Intermediate) — HackerRank",
     image: "/images/blog2.png",
-    link: "https://jsmastery.com/blog/the-ultimate-guide-to-mastering-three-js-for-3d-development",
+    link: "https://www.hackerrank.com/",
   },
   {
     id: 3,
-    date: "Aug 15, 2025",
-    title: "The Ultimate Guide to Mastering GSAP Animations",
+    date: "2024",
+    title: "Python (Basic & Intermediate) — HackerRank",
     image: "/images/blog3.png",
-    link: "https://jsmastery.com/blog/the-ultimate-guide-to-mastering-gsap-animations",
+    link: "https://www.hackerrank.com/",
+  },
+  {
+    id: 4,
+    date: "2024",
+    title: "Essential Business Communication Skills — LinkedIn Learning",
+    image: "/images/blog1.png",
+    link: "https://www.linkedin.com/learning/",
   },
 ];
 
 const techStack = [
   {
-    category: "Frontend",
-    items: ["React.js", "Next.js", "TypeScript"],
+    category: "Languages & Tools",
+    items: ["Python", "SQL", "Java", "Shell Scripting", "Git", "GitHub"],
   },
   {
-    category: "Mobile",
-    items: ["React Native", "Expo"],
+    category: "Data Science",
+    items: [
+      "Machine Learning",
+      "EDA",
+      "Feature Engineering",
+      "Model Evaluation",
+      "Statistical Analysis",
+    ],
   },
   {
-    category: "Styling",
-    items: ["Tailwind CSS", "Sass", "CSS"],
+    category: "AI & LLM Engineering",
+    items: ["LangChain", "Hugging Face", "RAG", "n8n", "AI Workflows", "Memory Systems"],
   },
   {
-    category: "Backend",
-    items: ["Node.js", "Express", "NestJS", "Hono"],
+    category: "Big Data & Databases",
+    items: ["Apache Spark", "PySpark", "Hadoop", "HDFS", "MongoDB", "BigQuery"],
   },
   {
-    category: "Database",
-    items: ["MongoDB", "PostgreSQL"],
+    category: "Cloud & MLOps",
+    items: ["AWS", "Azure", "GCP", "Databricks", "Docker", "CI/CD"],
   },
   {
-    category: "Dev Tools",
-    items: ["Git", "GitHub", "Docker"],
+    category: "BI & Visualization",
+    items: ["Tableau", "Power BI", "Excel Dashboards", "Streamlit", "Data Storytelling"],
   },
 ];
 
@@ -132,28 +146,21 @@ const socials = [
     text: "Github",
     icon: "/icons/github.svg",
     bg: "#f4656b",
-    link: "https://github.com/JavaScript-Mastery-Pro",
+    link: "https://github.com/saifimd1234",
   },
   {
     id: 2,
-    text: "Platform",
-    icon: "/icons/atom.svg",
-    bg: "#4bcb63",
-    link: "https://jsmastery.com/",
-  },
-  {
-    id: 3,
-    text: "Twitter/X",
-    icon: "/icons/twitter.svg",
-    bg: "#ff866b",
-    link: "https://x.com/jsmasterypro",
-  },
-  {
-    id: 4,
     text: "LinkedIn",
     icon: "/icons/linkedin.svg",
     bg: "#05b6f6",
-    link: "https://www.linkedin.com/company/javascriptmastery/posts/?feedView=all",
+    link: "https://www.linkedin.com/in/saifimd1234",
+  },
+  {
+    id: 3,
+    text: "Email",
+    icon: "/icons/user.svg",
+    bg: "#4bcb63",
+    link: "mailto:saifimd1234@gmail.com",
   },
 ];
 

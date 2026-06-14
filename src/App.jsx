@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navbar, Welcome, Dock, Desktop, MobileView } from '#components'
+import { Navbar, Welcome, Dock, Desktop, MobileView, SiriAssistant } from '#components'
 import WindowManager from '#windows'
 import { WindowsProvider } from '#store'
 import { ThemeProvider } from '#store/theme'
@@ -23,6 +23,7 @@ const App = () => {
           </main>
         </WindowsProvider>
       )}
+      <SiriAssistant />
     </ThemeProvider>
   )
 }
